@@ -26,7 +26,7 @@ if [ ! -f "$CONFIG_FILE" ]; then
 	chmod 0600 $CONFIG_FILE
 else
 	# extract token from config file
-	IAM_ROLE_TOKEN=`cat $CONFIG_FILE | sed -nre "s/.*?token[^']+'([^']+)'/\1/p"`
+	IAM_ROLE_TOKEN=`cat $CONFIG_FILE | sed -nre "s/.*?token[^']+'([^']+)',?/\1/p"`
 fi
 
 # call s3curl.pl with token and any given arguments
