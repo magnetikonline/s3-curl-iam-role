@@ -12,7 +12,7 @@ if [ ! -f "$CONFIG_FILE" ]; then
 	IAM_ROLE_DATA=`curl -s $IAM_BASE_URL/$IAM_ROLE_NAME/`
 	IAM_ROLE_ACCESS_KEY_ID=`echo "$IAM_ROLE_DATA" | sed -nre 's/.*?"AccessKeyId"[^"]+"([^"]+)",?/\1/p'`
 	IAM_ROLE_ACCESS_KEY_SECRET=`echo "$IAM_ROLE_DATA" | sed -nre 's/.*?"SecretAccessKey"[^"]+"([^"]+)",?/\1/p'`
-	IAM_ROLE_TOKEN=`echo "$IAM_ROLE_DATA" | sed -nre 's/.*?\"Token\"[^"]+"([^"]+)",?/\1/p'`
+	IAM_ROLE_TOKEN=`echo "$IAM_ROLE_DATA" | sed -nre 's/.*?"Token"[^"]+"([^"]+)",?/\1/p'`
 
 	# write details to config file
 	echo -e \
