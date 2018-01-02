@@ -8,11 +8,11 @@ CONFIG_FILE="$HOME/.s3curl"
 
 if [[ ! -f $CONFIG_FILE ]]; then
 	# fetch machine IAM role key/token details
-	IAMRoleName=$(curl -s "$IAM_BASE_URL/")
-	IAMRoleData=$(curl -s "$IAM_BASE_URL/$IAMRoleName/")
-	IAMRoleAccessKeyID=$(echo -n "$IAMRoleData" | sed -nr 's/.*?"AccessKeyId"[^"]+"([^"]+)",?/\1/p')
-	IAMRoleAccessKeySecret=$(echo -n "$IAMRoleData" | sed -nr 's/.*?"SecretAccessKey"[^"]+"([^"]+)",?/\1/p')
-	IAMRoleToken=$(echo -n "$IAMRoleData" | sed -nr 's/.*?"Token"[^"]+"([^"]+)",?/\1/p')
+	IAMRoleName=$(curl --silent "$IAM_BASE_URL/")
+	IAMRoleData=$(curl --silent "$IAM_BASE_URL/$IAMRoleName/")
+	IAMRoleAccessKeyID=$(echo -n "$IAMRoleData" | sed --quiet --regexp-extended 's/.*?"AccessKeyId"[^"]+"([^"]+)",?/\1/p')
+	IAMRoleAccessKeySecret=$(echo -n "$IAMRoleData" | sed --quiet --regexp-extended 's/.*?"SecretAccessKey"[^"]+"([^"]+)",?/\1/p')
+	IAMRoleToken=$(echo -n "$IAMRoleData" | sed --quiet --regexp-extended 's/.*?"Token"[^"]+"([^"]+)",?/\1/p')
 
 	# write details to config file
 	echo -e \
@@ -21,13 +21,13 @@ if [[ ! -f $CONFIG_FILE ]]; then
 		"\t\tid => '$IAMRoleAccessKeyID',\n" \
 		"\t\tkey => '$IAMRoleAccessKeySecret',\n" \
 		"\t\ttoken => '$IAMRoleToken'\n" \
-		"\t}\n);" > $CONFIG_FILE
+		"\t}\n);" >"$CONFIG_FILE"
 
-	chmod 0600 $CONFIG_FILE
+	chmod 0600 "$CONFIG_FILE"
 else
 	# extract token from config file
-	IAMRoleToken=$(cat "$CONFIG_FILE" | sed -nr "s/.*?token[^']+'([^']+)',?/\1/p")
+	IAMRoleToken=$(cat "$CONFIG_FILE" | sed --quiet --regexp-extended "s/.*?token[^']+'([^']+)',?/\1/p")
 fi
 
 # call s3curl.pl with token and any given arguments
-$DIRNAME/s3curl.pl --id $S3CURL_PROFILE -- -H "x-amz-security-token: $IAMRoleToken" $*
+"$DIRNAME/s3curl.pl" --id $S3CURL_PROFILE -- -H "x-amz-security-token: $IAMRoleToken" $*

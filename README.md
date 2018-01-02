@@ -17,10 +17,9 @@ $ ./s3curliamrole.sh -s https://s3.amazonaws.com/BUCKET-NAME/path/to/file.ext
 ## Executing via CloudInit / user-data
 If calling the script via EC2 user-data (I would think this is a common scenario), you will find (with Ubuntu AMI images at least) that the `$HOME` environment variable will not be defined this early in the instances bootstrap which will cause issues with both `s3curliamrole.sh` and `s3curl.pl`.
 
-Since user-data executes as root, you can combat this by placing the following lines at the start of your user-data scripts.
-
+Since user-data executes as root, you can combat this by placing the following lines at the start of your user-data scripts:
 ```sh
-#!/bin/bash
+#!/bin/bash -e
 
 # setting $HOME since not available yet when run via CloudInit
 HOME="/root"
@@ -28,5 +27,5 @@ export HOME
 ```
 
 ## Reference
-- http://aws.amazon.com/code/128
+- https://aws.amazon.com/code/amazon-s3-authentication-tool-for-curl/
 - http://www.dowdandassociates.com/blog/content/howto-use-s3curl-dot-pl-with-iam-roles/
